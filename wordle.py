@@ -12,6 +12,7 @@ NUM_LETTERS = 5
 NUM_GUESSES = 6
 FILE = 'dewordle\wordle.txt'
 
+
 def main():
     guesses = ['_' * NUM_LETTERS] * NUM_GUESSES
     wordlist = get_wordlist(FILE)
@@ -22,11 +23,11 @@ def main():
             refresh_page(headline=f"Guess {trial}")
             show_guesses(guesses, answer)
 
-            guesses[trial-1] = guess_word(guesses, wordlist)
+            guesses[trial - 1] = guess_word(guesses, wordlist)
 
-            if guesses[trial-1] == answer:
+            if guesses[trial - 1] == answer:
                 break
-    
+
     game_over(trial, guesses, answer, answer in guesses)
 
 
@@ -48,19 +49,19 @@ def guess_word(guesses, wordlist):
     if any((invalid := letter) not in ascii_letters for letter in guess):
         console.print(f"Invalid letter: '{invalid}'.🤣👉🤡 Are you dreaming?🤔😃 ", style='warning')
         return guess_word(guesses, wordlist)
-    
+
     if len(guess) != NUM_LETTERS:
         console.print(f"{guess} doesn't have 5 letters.😅🤔 So careless!😆🤗 ", style='warning')
         return guess_word(guesses, wordlist)
-    
-    if not guess in wordlist:
+
+    if guess not in wordlist:
         console.print(f'{guess} is not in the wordlist.😅 Are you inventing a new word?🤭😀 ', style='warning')
         return guess_word(guesses, wordlist)
 
     if guess in guesses:
         console.print(f'You have already guessed {guess}.🤗 Your memory is impressive!😄😚 ', style='warning')
         return guess_word(guesses, wordlist)
-    
+
     return guess
 
 
@@ -79,15 +80,15 @@ def show_guesses(guesses, answer):
             elif letter in answer:
                 style = 'bold white on yellow'
             elif letter in ascii_letters:
-                style = 'white on #666666'
+                style = 'bold white on #666666'
             else:
                 style = 'dim'
-            
+
             styled_guess.append(f'[{style}]{letter}[/]')
 
             if letter != "_":
                 letter_status[letter] = f"[{style}]{letter}[/]"
-        
+
         console.print(" ".join(styled_guess), justify="center")
     console.print("\n" + " ".join(letter_status.values()), justify="center")
 

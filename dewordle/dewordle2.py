@@ -8,14 +8,16 @@ letters_1 = set()
 letters_2 = set()
 correct_word = {i: set(chr(j) for j in range(ord('a'), ord('z') + 1)) for i in range(5)}
 
+
 def remove_letter(letter, correct_word):
     for letter_set in correct_word.values():
         letter_set.discard(letter)
     return
 
+
 f = open("wordle.txt")
 words = f.readlines()
-words = [word.strip() for word in words] # remove '\n'
+words = [word.strip() for word in words]  # remove '\n'
 
 print(f'Input your guesses word and corresponding results.')
 print(f'The word should have five letters and the results should have five numbers. ')
@@ -41,19 +43,19 @@ while True:
         print('Invalid input. Please input the results with five numbers.')
         continue
 
-    if not all(result in {0,1,2} for result in results):
+    if not all(result in {0, 1, 2} for result in results):
         print('Invalid input. Please use only 0, 1, or 2 for the results.')
         continue
 
     if not input_word.isalpha():
         print('Invalid input. Please input a word containing only letters.')
         continue
-    
+
     if all(result == 2 for result in results):
         print(f'Congratulations! You solved the wordle in {trial} steps.\n')
         break
 
-    if not input_word in words:
+    if input_word not in words:
         print('Your input word is not in the possible list of words. Are you sure you have entered this word? [y/n]')
         while True:
             cmd = input()
@@ -70,30 +72,27 @@ while True:
         if flag:
             continue
 
-
     # process input information
-    for i in range(0,5):
-        if results[i] == 0: # letter does not exist
+    for i in range(0, 5):
+        if results[i] == 0:  # letter does not exist
             if input_word[i] in letters_1 or input_word[i] in letters_2:
                 correct_word[i].discard(input_word[i])
             else:
                 remove_letter(input_word[i], correct_word)
-        
-        elif results[i] == 1: # letter exists, but pos wrong
+
+        elif results[i] == 1:  # letter exists, but pos wrong
             letters_1.add(input_word[i])
             correct_word[i].discard(input_word[i])
-        
-        else:# letter exists and correct pos
+
+        else:  # letter exists and correct pos
             letters_2.add(input_word[i])
             correct_word[i] = set(input_word[i])
 
-
-    #find remaining words
+    # find remaining words
     remaining_words = set()
-    for word in words: 
+    for word in words:
         if all(word[i] in correct_word[i] for i in range(5)) and letters_1.issubset(set(word)):
             remaining_words.add(word)
-
 
     # print number and words
     words = remaining_words
@@ -104,13 +103,13 @@ while True:
             count += 1
             if count % 12 == 0:
                 print()
-    
+
     if len(words) == 1:
         print(f'\nOnly one word left.\n')
     elif len(words) == 0:
         print(f'\nIt seems that there is something wrong with your given inputs. PLease input again.\n')
         break
     else:
-        print(f'\n{len(words)} words left in total.\n' )
+        print(f'\n{len(words)} words left in total.\n')
 
     trial += 1
