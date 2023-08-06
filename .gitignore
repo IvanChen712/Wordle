@@ -21,3 +21,10 @@ target/
 
 # 忽略 VSCode 相关的配置文件
 .vscode/
+
+# 忽略 Python 编译缓存文件
+__pycache__/
+*.pyc
+
+# 忽略 Windows 上生成的 Thumbs.db 文件
+Thumbs.db
