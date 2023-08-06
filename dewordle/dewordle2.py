@@ -4,28 +4,30 @@
 # 1: exist, but wrong position
 # 2: exist, and right position
 
-letters_1 = []
-letters_2 = []
+letters_1 = []  # letters labelled 1, same letter can appear
+letters_2 = []  # letters labelled 2, same letter can appear
 correct_word = {i: set(chr(j) for j in range(ord('a'), ord('z') + 1)) for i in range(5)}
+# all the possible letters in the position of a word
 
 
-def remove_letter(letter, correct_w):
+def remove_letter(letter, correct_w):  # remove a letter from all positions
     for letter_set in correct_w.values():
         letter_set.discard(letter)
     return
 
 
-def list_minus(l1, l2):
+def list_minus(l1, l2):  # e.g., [1,2,3,3,4] - [3,4] = [1,2,3]
     result = [x for x in l1 if x not in l2 or l1.count(x) > l2.count(x)]
     return result
 
 
-def list_contain(l1, l2):
+def list_contain(l1, l2):  # e.g., list_contain([1,2,2], [1,2,2,2,3]) = True
     if all(x in l2 and l1.count(x) <= l2.count(x) for x in l1):
         return True
+    return False
 
 
-def letter_num(letter, in_word, results, result):
+def letter_num(letter, in_word, results, result):  # the times a letter appears as 1/2/0 in the input word
     times = 0
     for i in range(5):
         if in_word[i] == letter and results[i] == result:
@@ -102,31 +104,42 @@ while True:
 
     # process input information
     for i in range(0, 5):
+
         if input_results[i] == 0:  # letter does not exist
             if input_word[i] in letters_1 or input_word[i] in letters_2:
+                # if the letter appears as 1 or 2 before, this 0 means no more this letter
                 correct_word[i].discard(input_word[i])
             else:
                 remove_letter(input_word[i], correct_word)
+
         elif input_results[i] == 1:  # letter exists, but pos wrong
             if ((input_word[i] not in letters_1 and input_word[i] not in letters_2) or
                     letter_num(input_word[i], input_word, input_results, 1) +
                     letter_num(input_word[i], input_word, input_results, 2) >
                     letters_1.count(input_word[i]) + letters_2.count(input_word[i])):
+                # if this letter doesn't appear in 1 or 2 before, it can be added
+                # if this letter appears as 1 or 2 before,
+                # it can be added only when this letters in the input is labeled as 1 or 2 more than before
                 letters_1.append(input_word[i])
-            correct_word[i].discard(input_word[i])
+            correct_word[i].discard(input_word[i])  # this letter can't appear in this position
 
         else:  # letter exists and correct pos
             if (input_word[i] not in letters_2 or
                     letter_num(input_word[i], input_word, input_results, 2) > letters_2.count(input_word[i])):
+                # the logic is similar to 1
                 letters_2.append(input_word[i])
-            if input_word[i] in letters_1:
+            if (input_word[i] in letters_1 and
+                    letter_num(input_word[i], input_word, input_results, 1) == 0):
+                # when this letter appears as 1 before and only appears as 2 now, remove it from 1
                 letters_1.remove(input_word[i])
-            correct_word[i] = set(input_word[i])
+            correct_word[i] = set(input_word[i])  # only this letter can appear in this position
 
     # find remaining words
     remaining_words = set()
     for word in words:
         if all(word[i] in correct_word[i] for i in range(5)) and list_contain(letters_1, list_minus(word, letters_2)):
+            # in each position, the letter of the word is in the possible letter sets
+            # all letters 1 is in the word without letters 2
             remaining_words.add(word)
 
     # print number and words
@@ -136,7 +149,7 @@ while True:
         for word in words:
             print(word, end="  ")
             count += 1
-            if count % 12 == 0:
+            if count % 12 == 0:  # 12 words in a row
                 print()
 
     if len(words) == 1:
