@@ -2,6 +2,8 @@
 
 A wordle game that is coded in python, and is played in the terminal.
 
+I followed this [guide](https://realpython.com/python-wordle-clone/) and created this wordle game.
+
 The word is randomly chosen in the wordlist `dewordle\wordle.txt`.
 
 **Usage**: Just run `wordle.py` in the terminal.
