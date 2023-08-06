@@ -10,7 +10,7 @@ console = Console(width=100, theme=Theme({'warning': 'red on yellow'}))
 
 NUM_LETTERS = 5
 NUM_GUESSES = 6
-FILE = 'dewordle\wordle.txt'
+FILE = r'dewordle\wordle.txt'
 
 
 def main():
@@ -70,6 +70,14 @@ def refresh_page(headline):
     console.rule(f"[bold blue]😍 {headline} 🤩[/]\n")
 
 
+def count_letter(letter, word):
+    times = 0
+    for le in word:
+        if le == letter:
+            times += 1
+    return times
+
+
 def show_guesses(guesses, answer):
     letter_status = {letter: letter for letter in ascii_uppercase}
     for guess in guesses:
@@ -78,7 +86,10 @@ def show_guesses(guesses, answer):
             if letter == correct:
                 style = 'bold white on green'
             elif letter in answer:
-                style = 'bold white on yellow'
+                if letter_status[letter] == letter and count_letter(letter, guess) > count_letter(letter, answer):
+                    style = 'bold white on #666666'
+                else:
+                    style = 'bold white on yellow'
             elif letter in ascii_letters:
                 style = 'bold white on #666666'
             else:
