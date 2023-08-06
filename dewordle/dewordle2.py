@@ -9,53 +9,46 @@ letters_2 = set()
 correct_word = {i: set(chr(j) for j in range(ord('a'), ord('z') + 1)) for i in range(5)}
 
 
-def remove_letter(letter, correct_word):
-    for letter_set in correct_word.values():
+def remove_letter(letter, correct_w):
+    for letter_set in correct_w.values():
         letter_set.discard(letter)
     return
 
 
-f = open("wordle.txt")
-words = f.readlines()
-words = [word.strip() for word in words]  # remove '\n'
+def get_words(file):
+    f = open(file)
+    wordlist = f.readlines()
+    wordlist = [w.strip() for w in wordlist]  # remove '\n'
+    return wordlist
 
-print(f'Input your guesses word and corresponding results.')
-print(f'The word should have five letters and the results should have five numbers. ')
-trial = 1
 
-while True:
-
-    # input
+def get_input(wordlist):
     user_input = input(f'Attempt {trial}:').strip()
     if ' ' in user_input:
-        input_word, results = user_input.split()
+        in_word, results = user_input.split()
         results = [int(r) for r in results]
-        input_word = input_word.lower()
+        in_word = in_word.lower()
     else:
         print('Invalid input. Please enter a space-separated word and results.')
-        continue
+        return get_input(wordlist)
 
-    if len(input_word) != 5:
+    if len(in_word) != 5:
         print('Invalid input. Please input a word with five letters.')
-        continue
+        return get_input(wordlist)
 
     if len(results) != 5:
         print('Invalid input. Please input the results with five numbers.')
-        continue
+        return get_input(wordlist)
 
     if not all(result in {0, 1, 2} for result in results):
         print('Invalid input. Please use only 0, 1, or 2 for the results.')
-        continue
+        return get_input(wordlist)
 
-    if not input_word.isalpha():
+    if not in_word.isalpha():
         print('Invalid input. Please input a word containing only letters.')
-        continue
+        return get_input(wordlist)
 
-    if all(result == 2 for result in results):
-        print(f'Congratulations! You solved the wordle in {trial} steps.\n')
-        break
-
-    if input_word not in words:
+    if in_word not in wordlist:
         print('Your input word is not in the possible list of words. Are you sure you have entered this word? [y/n]')
         while True:
             cmd = input()
@@ -70,17 +63,34 @@ while True:
             else:
                 print('You should enter y/n. [y/n]')
         if flag:
-            continue
+            return get_input(wordlist)
+
+    return in_word, results
+
+
+words = get_words("wordle.txt")
+
+print(f'Input your guesses word and corresponding results.')
+print(f'The word should have five letters and the results should have five numbers. ')
+trial = 1
+
+while True:
+
+    input_word, input_results = get_input(words)
+
+    if all(result == 2 for result in input_results):
+        print(f'Congratulations! You solved the wordle in {trial} steps.\n')
+        break
 
     # process input information
     for i in range(0, 5):
-        if results[i] == 0:  # letter does not exist
+        if input_results[i] == 0:  # letter does not exist
             if input_word[i] in letters_1 or input_word[i] in letters_2:
                 correct_word[i].discard(input_word[i])
             else:
                 remove_letter(input_word[i], correct_word)
 
-        elif results[i] == 1:  # letter exists, but pos wrong
+        elif input_results[i] == 1:  # letter exists, but pos wrong
             letters_1.add(input_word[i])
             correct_word[i].discard(input_word[i])
 
