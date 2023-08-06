@@ -40,6 +40,7 @@ def get_wordlist(file):
 
 def get_answer(wordlist):
     answer = random.choice(wordlist)
+    # print(answer)
     return answer
 
 

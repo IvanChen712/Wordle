@@ -108,8 +108,10 @@ while True:
             else:
                 remove_letter(input_word[i], correct_word)
         elif input_results[i] == 1:  # letter exists, but pos wrong
-            if (input_word[i] not in letters_1 or letter_num(input_word[i], input_word, input_results, 1) +
-                    letter_num(input_word[i], input_word, input_results, 2) > letters_1.count(input_word[i])):
+            if ((input_word[i] not in letters_1 and input_word[i] not in letters_2) or
+                    letter_num(input_word[i], input_word, input_results, 1) +
+                    letter_num(input_word[i], input_word, input_results, 2) >
+                    letters_1.count(input_word[i]) + letters_2.count(input_word[i])):
                 letters_1.append(input_word[i])
             correct_word[i].discard(input_word[i])
 
