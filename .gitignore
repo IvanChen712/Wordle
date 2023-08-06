@@ -1,0 +1,23 @@
+# 忽略临时文件和缓存文件
+*.tmp
+*.temp
+*.cache
+
+# 忽略编译生成的文件
+*.class
+*.o
+*.exe
+
+# 忽略日志文件
+*.log
+
+# 忽略依赖管理工具生成的文件
+node_modules/
+venv/
+target/
+
+# 忽略 JetBrains IDE 配置文件夹
+.idea/
+
+# 忽略 VSCode 相关的配置文件
+.vscode/
