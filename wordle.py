@@ -12,6 +12,8 @@ NUM_LETTERS = 5
 NUM_GUESSES = 6
 FILE = r'dewordle\wordle.txt'
 letter_status_num = {letter: -1 for letter in ascii_uppercase}
+
+
 # -1 unknown, 0 not exist, 1 exist but wrong pos, 2 exist and right pos
 
 
@@ -83,6 +85,23 @@ def count_letter(letter, word):  # count how many times a letter appears in a wo
     return times
 
 
+def nth_certain_letter(index, word, letter):
+    n = 0
+    for i in range(index + 1):
+        if letter == word[i]:
+            n += 1
+    return n
+
+
+def prev_letter_index(index, word, letter):
+    pre_index = 0
+    for i in range(index):
+        if letter == word[i]:
+            pre_index = i
+            break
+    return pre_index
+
+
 def show_guesses(guesses, answer):
     global letter_status_num
     letter_status = {letter: letter for letter in ascii_uppercase}
@@ -90,21 +109,18 @@ def show_guesses(guesses, answer):
     for guess in guesses:
         styled_guess = []
 
-        for letter, correct in zip(guess, answer):
+        for index, (letter, correct) in enumerate(zip(guess, answer)):
 
             if letter == correct:
                 style = 'bold white on green'
                 letter_status_num[letter] = 2
+                if nth_certain_letter(index, guess, letter) > count_letter(letter, answer):
+                    styled_guess[prev_letter_index(index, guess, letter)] = f'[{"bold white on #666666"}]{letter}[/]'
 
             elif letter in answer:
                 # handle exceptions, e.g., if we guess two 'c', but the answer only has one 'c'
-                if letter_status_num[letter] == 2 and count_letter(letter, guess) > count_letter(letter, answer):
-                    # first c is green, second c is white
+                if nth_certain_letter(index, guess, letter) > count_letter(letter, answer):
                     style = 'bold white on #666666'
-                elif letter_status_num[letter] == -1 and count_letter(letter, guess) > count_letter(letter, answer):
-                    # not defined, then make it white
-                    style = 'bold white on #666666'
-                    letter_status_num[letter] = max(letter_status_num[letter], 0)
                 else:
                     style = 'bold white on yellow'
                     letter_status_num[letter] = max(letter_status_num[letter], 1)
