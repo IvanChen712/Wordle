@@ -11,14 +11,18 @@ console = Console(width=100, theme=Theme({'warning': 'red on yellow'}))
 NUM_LETTERS = 5
 NUM_GUESSES = 6
 FILE = r'dewordle\wordle.txt'
+letter_status_num = {letter: -1 for letter in ascii_uppercase}
+# -1 unknown, 0 not exist, 1 exist but wrong pos, 2 exist and right pos
 
 
 def main():
     guesses = ['_' * NUM_LETTERS] * NUM_GUESSES
+
     wordlist = get_wordlist(FILE)
     answer = get_answer(wordlist)
 
     with contextlib.suppress(KeyboardInterrupt):
+        # when we forcibly interrupt, game over will appear before program ends
         for trial in range(1, NUM_GUESSES + 1):
             refresh_page(headline=f"Guess {trial}")
             show_guesses(guesses, answer)
@@ -71,7 +75,7 @@ def refresh_page(headline):
     console.rule(f"[bold blue]😍 {headline} 🤩[/]\n")
 
 
-def count_letter(letter, word):
+def count_letter(letter, word):  # count how many times a letter appears in a word
     times = 0
     for le in word:
         if le == letter:
@@ -80,26 +84,47 @@ def count_letter(letter, word):
 
 
 def show_guesses(guesses, answer):
+    global letter_status_num
     letter_status = {letter: letter for letter in ascii_uppercase}
+
     for guess in guesses:
         styled_guess = []
+
         for letter, correct in zip(guess, answer):
+
             if letter == correct:
                 style = 'bold white on green'
+                letter_status_num[letter] = 2
+
             elif letter in answer:
-                if letter_status[letter] == letter and count_letter(letter, guess) > count_letter(letter, answer):
+                # handle exceptions, e.g., if we guess two 'c', but the answer only has one 'c'
+                if letter_status_num[letter] == 2 and count_letter(letter, guess) > count_letter(letter, answer):
+                    # first c is green, second c is white
                     style = 'bold white on #666666'
+                elif letter_status_num[letter] == -1 and count_letter(letter, guess) > count_letter(letter, answer):
+                    # not defined, then make it white
+                    style = 'bold white on #666666'
+                    letter_status_num[letter] = max(letter_status_num[letter], 0)
                 else:
                     style = 'bold white on yellow'
+                    letter_status_num[letter] = max(letter_status_num[letter], 1)
+
             elif letter in ascii_letters:
                 style = 'bold white on #666666'
+                letter_status_num[letter] = max(letter_status_num[letter], 0)
+
             else:
                 style = 'dim'
 
             styled_guess.append(f'[{style}]{letter}[/]')
 
             if letter != "_":
-                letter_status[letter] = f"[{style}]{letter}[/]"
+                if letter_status_num[letter] == 2:
+                    letter_status[letter] = f"[{'bold white on green'}]{letter}[/]"
+                elif letter_status_num[letter] == 1:
+                    letter_status[letter] = f"[{'bold white on yellow'}]{letter}[/]"
+                elif letter_status_num[letter] == 0:
+                    letter_status[letter] = f"[{'bold white on #666666'}]{letter}[/]"
 
         console.print(" ".join(styled_guess), justify="center")
     console.print("\n" + " ".join(letter_status.values()), justify="center")
