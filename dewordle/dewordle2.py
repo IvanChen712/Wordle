@@ -4,8 +4,8 @@
 # 1: exist, but wrong position
 # 2: exist, and right position
 
-letters_1 = set()
-letters_2 = set()
+letters_1 = []
+letters_2 = []
 correct_word = {i: set(chr(j) for j in range(ord('a'), ord('z') + 1)) for i in range(5)}
 
 
@@ -13,6 +13,24 @@ def remove_letter(letter, correct_w):
     for letter_set in correct_w.values():
         letter_set.discard(letter)
     return
+
+
+def list_minus(l1, l2):
+    result = [x for x in l1 if x not in l2 or l1.count(x) > l2.count(x)]
+    return result
+
+
+def list_contain(l1, l2):
+    if all(x in l2 and l1.count(x) <= l2.count(x) for x in l1):
+        return True
+
+
+def letter_num(letter, in_word, results, result):
+    times = 0
+    for i in range(5):
+        if in_word[i] == letter and results[i] == result:
+            times += 1
+    return times
 
 
 def get_words(file):
@@ -89,19 +107,24 @@ while True:
                 correct_word[i].discard(input_word[i])
             else:
                 remove_letter(input_word[i], correct_word)
-
         elif input_results[i] == 1:  # letter exists, but pos wrong
-            letters_1.add(input_word[i])
+            if (input_word[i] not in letters_1 or letter_num(input_word[i], input_word, input_results, 1) +
+                    letter_num(input_word[i], input_word, input_results, 2) > letters_1.count(input_word[i])):
+                letters_1.append(input_word[i])
             correct_word[i].discard(input_word[i])
 
         else:  # letter exists and correct pos
-            letters_2.add(input_word[i])
+            if (input_word[i] not in letters_2 or
+                    letter_num(input_word[i], input_word, input_results, 2) > letters_2.count(input_word[i])):
+                letters_2.append(input_word[i])
+            if input_word[i] in letters_1:
+                letters_1.remove(input_word[i])
             correct_word[i] = set(input_word[i])
 
     # find remaining words
     remaining_words = set()
     for word in words:
-        if all(word[i] in correct_word[i] for i in range(5)) and letters_1.issubset(set(word)):
+        if all(word[i] in correct_word[i] for i in range(5)) and list_contain(letters_1, list_minus(word, letters_2)):
             remaining_words.add(word)
 
     # print number and words
