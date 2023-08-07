@@ -18,3 +18,7 @@
 * saint
 * lance
 * crone
+
+**five words that cover 25 alphabets**:
+
+waltz	vibex	fjord	gymps	chunk

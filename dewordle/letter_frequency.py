@@ -1,15 +1,18 @@
-letter_freq = {chr(i): 0 for i in range(ord('a'), ord('z') + 1)}
-letter_freq_pos = {chr(i): [0, 0, 0, 0, 0] for i in range(ord('a'), ord('z') + 1)}
+from wordle import get_wordlist
 
-f = open("wordle.txt")
-words = f.readlines()
-words = [word.strip() for word in words] # remove '\n'
 
-for word in words:
-    for i, letter in enumerate(word):
-        letter_freq[letter] += 1
-        letter_freq_pos[letter][i] += 1
+if __name__ == "__main__":
 
-# print(letter_freq)
-for key, values in letter_freq_pos.items():
-    print(f'{key}: {letter_freq_pos[key]}')
+    letter_freq = {chr(i): 0 for i in range(ord('a'), ord('z') + 1)}
+    letter_freq_pos = {chr(i): [0, 0, 0, 0, 0] for i in range(ord('a'), ord('z') + 1)}
+
+    words = get_wordlist("wordle.txt")
+
+    for word in words:
+        for i, letter in enumerate(word):
+            letter_freq[letter] += 1
+            letter_freq_pos[letter][i] += 1
+
+    # print(letter_freq)
+    for key, values in letter_freq_pos.items():
+        print(f'{key}: {letter_freq_pos[key]}')

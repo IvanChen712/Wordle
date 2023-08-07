@@ -37,3 +37,9 @@ Only one word left.
 Attempt 4:polyp 22222
 Congratulations! You solved the wordle in 4 steps.
 ```
+
+## Letter frequency
+
+Frequencies of letters in total and in each position in all the words in the word list.
+
+## Unrepeated words
