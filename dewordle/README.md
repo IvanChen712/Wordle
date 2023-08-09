@@ -18,7 +18,7 @@ This version can only filter the words that have or don't have certain letters.
 * 1: exist, but wrong position
 * 2: exist, and right position
 
-```
+```text
 Input your guesses word and corresponding results.
 The word should have five letters and the results should have five numbers. 
 Attempt 1:irate 00000
@@ -43,3 +43,5 @@ Congratulations! You solved the wordle in 4 steps.
 Frequencies of letters in total and in each position in all the words in the word list.
 
 ## Unrepeated words
+
+Currently, this is only available when the wordlist is very short.
